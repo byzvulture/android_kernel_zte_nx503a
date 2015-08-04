@@ -35,7 +35,7 @@
 #endif
 #define ZTEMT_SYNAPTICS_WAKEUP_GESTURE	1
 #define ZTEMT_SYNAPTICS_PALM_SLEEP		1	//Added by luochangyang, for palm sleep  2014/03/19
-#define ZTEMT_SYNAPTICS_DEBUG			0
+#define ZTEMT_SYNAPTICS_DEBUG			1
 /***ZTEMT END***/
 
 #if (LINUX_VERSION_CODE > KERNEL_VERSION(2, 6, 38))
