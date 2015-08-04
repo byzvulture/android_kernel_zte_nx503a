@@ -367,7 +367,7 @@ static struct device_attribute attrs[] = {
 			synaptics_rmi4_store_error),
 #if ZTEMT_TP_WAKEUP_GESTURE_FUNCTION
     /*** ZTEMT Added by luochangyang, 2014/03/19 ***/
-	__ATTR(wakeup_gesture, 00664,
+	__ATTR(wakeup_gesture, 00666,
 			synaptics_wakeup_gesture_show,
 			synaptics_wakeup_gesture_store),
    	/***ZTEMT END***/
