@@ -69,6 +69,9 @@
 #define vibrator_debug(fmt, args...) do {} while(0)
 #endif
 
+#ifdef CONFIG_ZTEMT_VIBRATOR_WAVEVALUE
+static int wavevalue = 48;
+#endif
 #ifdef VIBRATOR_MULTI_USERMODE
 unsigned char nubia_wave_sequence[] = {
 	WAVEFORM_SEQUENCER_REG, 		15,
@@ -82,7 +85,7 @@ unsigned char nubia_wave_sequence[] = {
 };
 
 unsigned char nubia_wave_sequence1[] = {
-	WAVEFORM_SEQUENCER_REG, 		1,
+	WAVEFORM_SEQUENCER_REG, 		48,
 	WAVEFORM_SEQUENCER_REG2,		0,
 	WAVEFORM_SEQUENCER_REG3,		0,
 	WAVEFORM_SEQUENCER_REG4,		0,
@@ -391,7 +394,7 @@ static void vibrator_off(struct i2c_client *client)
 	}
 
 #ifdef VIBRATOR_MULTI_USERMODE
-	pDrv2605data->usermode = 0;
+	pDrv2605data->usermode = 1;
 #endif
 
 	wake_unlock(&vibdata.wklock);
@@ -566,6 +569,35 @@ static void vibrator_enable(struct timed_output_dev *dev, int value)
 }
 #endif
 
+#ifdef CONFIG_ZTEMT_VIBRATOR_WAVEVALUE
+static ssize_t vibrator_wavevalue_show(struct device *dev,
+		struct device_attribute *attr,	char *buf)
+{
+	return sprintf(buf, "%d\n", wavevalue);
+}
+
+static ssize_t vibrator_wavevalue_store(struct device *dev,
+		struct device_attribute *attr, const char *buf, size_t size)
+{
+	unsigned long value;
+	if (strict_strtoul(buf, 0, &value))
+		return -EINVAL;
+	if (value == 51) {
+		wavevalue = 47;
+	} else if (value == 50) {
+		wavevalue = 48;
+	} else if (value == 48) {
+		wavevalue = 50;
+	} else if (value == 47) {
+		wavevalue = 51;
+	} else {	
+		wavevalue = value;
+	}
+	nubia_wave_sequence1[1] = wavevalue;
+	return size;
+}
+#endif
+
 #ifdef VIBRATOR_MULTI_USERMODE
 static ssize_t vibrator_usermode_show(struct device *dev,
 		struct device_attribute *attr,	char *buf)
@@ -593,6 +625,9 @@ static ssize_t vibrator_usermode_store(struct device *dev,
 
 static struct device_attribute vibrator_attributes[] = {
 	__ATTR(usermode, 0644, vibrator_usermode_show, vibrator_usermode_store),
+#ifdef CONFIG_ZTEMT_VIBRATOR_WAVEVALUE
+	__ATTR(wave_value, 0666, vibrator_wavevalue_show, vibrator_wavevalue_store),
+#endif
 };
 
 static int vibrator_create_sysfs(struct device *dev)

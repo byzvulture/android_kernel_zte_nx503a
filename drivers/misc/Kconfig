@@ -685,6 +685,13 @@ config ZTEMT_HAPTICS_DRV2605_DRIVE_ERM
 	help
 	  Say 'y' here to drive ERM rather than LRA using drv2605.
 
+config ZTEMT_VIBRATOR_WAVEVALUE
+	tristate "HAPTICS Support to set vibrator wave"
+	depends on I2C
+	default n
+	help
+	  This option enables support for on-chip drv2605 drivers to set vibrator wave.
+
 endif
 
 source "drivers/misc/c2port/Kconfig"
