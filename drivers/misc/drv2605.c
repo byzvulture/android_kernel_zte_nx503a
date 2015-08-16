@@ -71,6 +71,7 @@
 
 #ifdef CONFIG_ZTEMT_VIBRATOR_WAVEVALUE
 static int wavevalue = 48;
+static int wavetmp = 47;
 #endif
 #ifdef VIBRATOR_MULTI_USERMODE
 unsigned char nubia_wave_sequence[] = {
@@ -448,13 +449,15 @@ static void vibrator_enable_internal_trigger(struct timed_output_dev *dev, int v
 	struct drv2605_data *pDrv2605data = i2c_get_clientdata(client);
 	//struct Haptics	*pvibdata = container_of(dev, struct Haptics, to_dev);
 	char mode;
-
+	wavetmp = nubia_wave_sequence1[1];
 	mutex_lock(&vibdata.lock);
 	hrtimer_cancel(&vibdata.timer);
 	cancel_work_sync(&vibdata.work);
 
 	wake_lock(&vibdata.wklock);
-
+	if (value > 250) {
+			nubia_wave_sequence1[1] = 47;
+		}
 	if (value) {
 		switch(pDrv2605data->usermode){
 		case 1:
@@ -509,7 +512,7 @@ static void vibrator_enable_internal_trigger(struct timed_output_dev *dev, int v
 	} else {
 		vibrator_off(client);
 	}
-
+	nubia_wave_sequence1[1] = wavetmp;
 	mutex_unlock(&vibdata.lock);
 }
 
